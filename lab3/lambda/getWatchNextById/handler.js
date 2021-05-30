@@ -27,10 +27,8 @@ module.exports.get_watch_next_by_id = (event, context, callback) => {
     });
   }
 
-  // mi collego al db
-  // .find(array: el) mi ritorna un array con solo el all'interno
-  // .skip salto le prime n pagine
-  // .limit limito il numero di documenti
+  // collegamento al database
+  // .find(array: el) ritorna un array con solo el all'interno
   connect_to_db().then(() => {
     console.log("=> get_all watch next talks");
     talk
