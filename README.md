@@ -9,9 +9,9 @@ Homeworks for Mobile and Cloud Technologies UniBG course
 ## Lab 2
 
 - `datasets` contained in AWS S3 Bucket and scraper of International Days from United Nations web site
-- `pyspark` Glue Jobs to:
-  - populate a MongoDB collection with TEDx data (tags + watch_next)
-  - `TODO` populate a MongoDB collection with International Days (with keywords)
+- `pyspark` Glue Jobs to populate MongoDB collections with:
+  - TEDx data (tags + watch_next)
+  - International Days data
 - `DOING` Homework presentation
 
 ## Lab 3
