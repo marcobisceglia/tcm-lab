@@ -1,4 +1,4 @@
-#Import di default
+# Import di default
 import sys
 import json
 import pyspark
@@ -29,7 +29,7 @@ tedx_dataset_path = "s3://tedx-app-data/tedx_dataset.csv"
 tags_dataset_path = "s3://tedx-app-data/tags_dataset.csv"
 watch_next_dataset_path = "s3://tedx-app-data/watch_next_dataset.csv"
 
-# Leggo il file dataset
+# Leggo il file dei tedx
 tedx_dataset = spark.read \
     .option("header","true") \
     .option("quote", "\"") \
@@ -51,9 +51,17 @@ print(f"Number of items from RAW DATA with NOT NULL KEY {count_items_null}")
 # Leggo il file tags
 tags_dataset = spark.read.option("header","true").csv(tags_dataset_path)
 
-# Leggo il file watch_next con distinct per rimuovere duplicati
-watch_next_dataset = spark.read.option("header","true").csv(watch_next_dataset_path).distinct() \
-    .where('url != "https://www.ted.com/session/new?context=ted.www%2Fwatch-later"')
+# Leggo il file watch_next
+watch_next_dataset = spark.read.option("header","true").csv(watch_next_dataset_path)
+count_items = watch_next_dataset.count()
+
+# Rimuovo i duplicati con distinct e i link errati
+watch_next_dataset = watch_next_dataset.distinct().where('url != "https://www.ted.com/session/new?context=ted.www%2Fwatch-later"')
+count_items_without_duplicates = watch_next_dataset.count()
+
+# Stampo nel log info per rimozione duplicati
+print(f"Number of items from RAW DATA {count_items}")
+print(f"Number of items from RAW DATA without duplicates and wrong links {count_items_without_duplicates}")
 
 # Raggruppo i due dataset, aggiungendo i watch next nel dataset
 watch_next_dataset_agg = watch_next_dataset.groupBy(col("idx").alias("idx_ref")).agg(collect_list("url").alias("watch_next"))
@@ -72,6 +80,7 @@ tags_dataset_agg.printSchema()
 tedx_dataset_agg = watch_next_dataset_agg.join(tags_dataset_agg, watch_next_dataset_agg._id == tags_dataset_agg.idx_ref, "left") \
     .drop("idx_ref") \
 
+# Stampo
 tedx_dataset_agg.printSchema()
 
 # Connessione al database
