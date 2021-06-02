@@ -1,4 +1,4 @@
-// GET BY TALK HANDLER
+// GET WATCH NEXT BY ID HANDLER
 // handler funziona da controller
 
 // importa il file db.js e Talk.js
