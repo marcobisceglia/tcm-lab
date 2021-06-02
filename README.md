@@ -18,7 +18,7 @@ Homeworks for Mobile and Cloud Technologies UniBG course
 
 - `lambda` functions in Node.js exposed with AWS API Gateway
   - getWatchNextById
-  - `TODO` getTEDxByInternationalDate
+  - getTEDxByInternationalDay
 - `TODO` Homework presentation
 
 ## Authors
