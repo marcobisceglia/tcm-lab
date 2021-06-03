@@ -34,6 +34,7 @@ tedx_dataset = spark.read \
     .option("header","true") \
     .option("quote", "\"") \
     .option("escape", "\"") \
+    .option("multiline", "true") \
     .csv(tedx_dataset_path)
     
 # Stampo
@@ -63,7 +64,7 @@ count_items_without_duplicates = watch_next_dataset.count()
 print(f"Number of items from RAW DATA {count_items}")
 print(f"Number of items from RAW DATA without duplicates and wrong links {count_items_without_duplicates}")
 
-# Raggruppo i due dataset, aggiungendo i watch next nel dataset
+# Raggruppo i dataset tedx e watch next
 watch_next_dataset_agg = watch_next_dataset.groupBy(col("idx").alias("idx_ref")).agg(collect_list("url").alias("watch_next"))
 watch_next_dataset_agg.printSchema()
 watch_next_dataset_agg = tedx_dataset.join(watch_next_dataset_agg, tedx_dataset.idx == watch_next_dataset_agg.idx_ref, "left") \
@@ -74,7 +75,7 @@ watch_next_dataset_agg = tedx_dataset.join(watch_next_dataset_agg, tedx_dataset.
 # Stampo
 watch_next_dataset_agg.printSchema()
 
-# Raggruppo i due dataset, aggiungendo i tags nel dataset
+# Aggiungo anche i tags
 tags_dataset_agg = tags_dataset.groupBy(col("idx").alias("idx_ref")).agg(collect_list("tag").alias("tags"))
 tags_dataset_agg.printSchema()
 tedx_dataset_agg = watch_next_dataset_agg.join(tags_dataset_agg, watch_next_dataset_agg._id == tags_dataset_agg.idx_ref, "left") \

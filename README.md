@@ -2,11 +2,11 @@
 
 Homeworks for Mobile and Cloud Technologies UniBG course
 
-## Lab 1
+## Lab 1 - TEDx Project
 
 - Homework presentation
 
-## Lab 2
+## Lab 2 - AWS Glue
 
 - `datasets` contained in AWS S3 Bucket and scraper of International Days from United Nations web site
 - `pyspark` Glue Jobs to populate MongoDB collections with:
@@ -14,7 +14,7 @@ Homeworks for Mobile and Cloud Technologies UniBG course
   - International Days data
 - `DOING` Homework presentation
 
-## Lab 3
+## Lab 3 - AWS Lambda Function
 
 - `lambda` functions in Node.js exposed with AWS API Gateway
   - getWatchNextById
