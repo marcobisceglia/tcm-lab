@@ -12,14 +12,14 @@ Homeworks for Mobile and Cloud Technologies UniBG course
 - `pyspark` Glue Jobs to populate MongoDB collections with:
   - TEDx data (tags + watch_next)
   - International Days data
-- `DOING` Homework presentation
+- Homework presentation
 
 ## Lab 3 - AWS Lambda Function
 
 - `lambda` functions in Node.js exposed with AWS API Gateway
   - getWatchNextById
   - getTEDxByInternationalDay
-- `TODO` Homework presentation
+- Homework presentation
 
 ## Authors
 
