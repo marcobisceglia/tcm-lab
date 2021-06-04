@@ -1,23 +1,17 @@
 // GET TEDX BY INTERNATIONAL DAY HANDLER
-// handler funziona da controller
 
-// importa il file db.js e Talk.js
+// import del file db.js e i modelli Talk.js e Day.js
 const connect_to_db = require("./db");
 const talk = require("./Talk");
 const day = require("./Day");
 
-// data una stringa ritorna una lista di parole filtrate dalla seconda lista
-const getKeywords = (wordsListStr, wordsToRemove) =>
-  wordsListStr
+// dato il nome dell'evento, ritorna un array con tutte le parole chiave
+// escludendo le parole in wordsToRemove
+const getKeywords = (event, wordsToRemove) =>
+  event
     .split(" ")
     .map((el) => el.toLowerCase())
     .filter((el) => !wordsToRemove.includes(el));
-
-// importo parole che mi permettono di filtrare i nomi delle giornate internazionali
-// per ottenere parole chiave
-const fs = require("fs");
-var file = fs.readFileSync("./words_to_remove.txt").toString();
-const WORDS_TO_REMOVE = file.split("\n");
 
 // event conterrà il payload
 module.exports.get_tedx_by_international_day = (event, context, callback) => {
@@ -26,7 +20,6 @@ module.exports.get_tedx_by_international_day = (event, context, callback) => {
   // stampo il contenuto di ciò che ricevo
   console.log("Received event:", JSON.stringify(event, null, 2));
 
-  // body conterrà il payload, quindi i parametri che passo all'api
   let body = {};
   if (event.body) {
     body = JSON.parse(event.body);
@@ -43,13 +36,9 @@ module.exports.get_tedx_by_international_day = (event, context, callback) => {
 
   // collegamento al database
   connect_to_db().then(() => {
-    // ogni giorno ha un array con le keywords
-    let keywordsForDay = [];
-
-    // array di tutte le keywords
+    // conterranno tutte le giornate internazionali
+    // e le parole chiave trovate
     let keywords = [];
-
-    // giorni trovati
     let days = [];
 
     console.log("QUERY INTERNATIONAL DAYS");
@@ -64,23 +53,31 @@ module.exports.get_tedx_by_international_day = (event, context, callback) => {
           });
         }
 
-        // stampo risposta
-        console.log(response);
+        // stampo info
+        console.log("International Days objects", response);
 
-        for (let el of response) {
-          days.push(el.event);
-          keywordsForDay.push(getKeywords(el.event, WORDS_TO_REMOVE));
-        }
+        // importo le parole da rimuovere dai nomi delle giornate internazionali
+        // per ottenere le keywords
+        const fs = require("fs");
+        var file = fs.readFileSync("./words_to_remove.txt").toString();
+        const WORDS_TO_REMOVE = file.split("\n");
 
-        // stampo giorni trovati
-        console.log(days);
+        // response contiene gli oggetti dei giorni trovati
+        // estraggo le parole chiave da ogni giorno
+        response.forEach((dayObj) => {
+          days.push(dayObj.event);
+          getKeywords(dayObj.event, WORDS_TO_REMOVE).forEach((word) => {
+            // una giornata internazionale potrebbe contenere la stessa
+            // keyword già inserita per un'altra
+            if (!keywords.includes(word)) {
+              keywords.push(word);
+            }
+          });
+        });
 
-        keywordsForDay.forEach((arr) =>
-          arr.forEach((word) => keywords.push(word))
-        );
-
-        // stampo tutte le parole chiave
-        console.log(keywords);
+        // stampo info
+        console.log("International Days", days);
+        console.log("Keywords", keywords);
       })
       .catch((err) =>
         callback(null, {
@@ -95,10 +92,10 @@ module.exports.get_tedx_by_international_day = (event, context, callback) => {
         talk
           .find({ tags: { $in: keywords } })
           .then((response) => {
-            console.log(response);
-
             let teds = [];
-            response.forEach((el) => teds.push(el.url));
+            response.forEach((ted) => teds.push(ted.url));
+
+            console.log("TEDx Talks URLs", teds);
 
             // costruisco oggetto da restituire
             let result = {};
