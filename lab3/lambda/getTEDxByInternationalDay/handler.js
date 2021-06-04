@@ -99,7 +99,7 @@ module.exports.get_tedx_by_international_day = (event, context, callback) => {
 
             // costruisco oggetto da restituire
             let result = {};
-            result["day"] = days;
+            result["days"] = days;
             result["tags"] = keywords;
             result["teds"] = teds;
 
